@@ -1,15 +1,13 @@
-# 워크플로의 이름 지정
-name: CI/CD
+name: CI
 
-#워크 플로가 시작될 조건 지정
 on:
   push:
     branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest #실행환경 지정
-    #실행 스텝 지정
+    runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
 
@@ -18,32 +16,16 @@ jobs:
           distribution: 'corretto'
           java-version: '17'
 
+      - name: Set up environment variables
+        run: |
+          echo "SPRING_PROFILES_ACTIVE=test" >> $GITHUB_ENV
+          echo "OAUTH2_CLIENT_ID=${{ secrets.OAUTH2_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "OAUTH2_CLIENT_SECRET=${{ secrets.OAUTH2_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "OAUTH2_CLIENT_PROVIDER=google" >> $GITHUB_ENV
+          echo "JWT_SECRET=study-springboot" >> $GITHUB_ENV
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean build
-
-      # 현재 시간 가져오기
-      - name: Get current time
-        uses: josStorer/get-current-time@v2.0.2
-        id: current-time
-        with:
-          format: YYYY-MM-DDTHH-mm-ss
-          utcOffset: "+09:00"
-
-      # 배포용 패키지 경로 저장
-      - name: Set artifact
-        run: echo "artifact=$(ls ./build/libs)" >> $GITHUB_ENV
-
-      # 빈스토크 배포
-      - name: Beanstalk Deploy
-        uses: einaregilsson/beanstalk-deploy@v20
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-          application_name: springboot-developer
-          environment_name: springboot-developer-env
-          version_label: github-action-${{ steps.current-time.outputs.formattedTime }}
-          region: ap-northeast-2
-          deployment_package: ./build/libs/${{ env.artifact }}
+        run: ./gradlew clean build --warning-mode all

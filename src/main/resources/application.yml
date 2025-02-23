@@ -1,14 +1,15 @@
 spring:
   jpa:
-    # 전송 쿼리 확인
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-
-    # 테이블 생성 후에 data.sql 실행
     defer-datasource-initialization: true
-  h2: # ② H2 콘솔 활성화
+    # AWS RDS 사용으로 인한 주석화.
+    #datasource:
+    #url: jdbc:h2:mem:testdb
+    #username: sa
+  h2:
     console:
       enabled: true
   security:
@@ -16,11 +17,17 @@ spring:
       client:
         registration:
           google:
-            client-id: ${OAUTH2_CLIENT_ID}
-            client-secret: ${OAUTH2_CLIENT_SECRET}
+            client-id: ~
+            client-secret: ~
             scope:
               - email
               - profile
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: id
 jwt:
-  issuer: ajufresh@gmail.com
+  issuer: qlql7748@gmail.com
   secret_key: study-springboot
