@@ -1,31 +1,25 @@
+# ① 워크플로의 이름 지정
 name: CI
 
+# ② 워크플로가 시작될 조건 지정
 on:
   push:
     branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-latest  # ③ 실행 환경 설정
+    # ④ 실행 스텝 지정
     steps:
       - uses: actions/checkout@v3
 
       - uses: actions/setup-java@v3
         with:
-          distribution: 'corretto'
+          distribution: 'zulu'
           java-version: '17'
-
-      - name: Set up environment variables
-        run: |
-          echo "SPRING_PROFILES_ACTIVE=test" >> $GITHUB_ENV
-          echo "OAUTH2_CLIENT_ID=${{ secrets.OAUTH2_CLIENT_ID }}" >> $GITHUB_ENV
-          echo "OAUTH2_CLIENT_SECRET=${{ secrets.OAUTH2_CLIENT_SECRET }}" >> $GITHUB_ENV
-          echo "OAUTH2_CLIENT_PROVIDER=google" >> $GITHUB_ENV
-          echo "JWT_SECRET=study-springboot" >> $GITHUB_ENV
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean build --stacktrace
+        run: ./gradlew clean build
