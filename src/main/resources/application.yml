@@ -15,9 +15,6 @@ spring:
     oauth2:
       client:
         registration:
-          google:
-            client-id: 720150823291-mae0qve5bhmedl61jmibdve0ik8pm94c.apps.googleusercontent.com
-            client-secret: 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
             scope:
               - email
               - profile
